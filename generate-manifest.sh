@@ -12,7 +12,7 @@ else
   CHECKSUM_CMD="sha256sum"
 fi
 
-echo "$($CHECKSUM_CMD dist/terraform-provider-$PROVIDER_NAME_${VERSION}_darwin_amd64.zip | awk '{ print $1 }')"
+echo "$($CHECKSUM_CMD dist/terraform-provider-${PROVIDER_NAME}_${VERSION}_darwin_amd64.zip | awk '{ print $1 }')"
 
 # Create the JSON structure
 cat <<EOF > terraform-registry-manifest.json
@@ -23,29 +23,25 @@ cat <<EOF > terraform-registry-manifest.json
         "$VERSION": {
           "platforms": {
             "darwin_amd64": {
-              "filename": "terraform-provider-$PROVIDER_NAME_${VERSION}_darwin_amd64.zip",
-              "shasum": "$($CHECKSUM_CMD dist/terraform-provider-$PROVIDER_NAME_${VERSION}_darwin_amd64.zip | awk '{ print $1 }')"
+              "filename": "terraform-provider-${PROVIDER_NAME}_${VERSION}_darwin_amd64.zip",
+              "shasum": "$($CHECKSUM_CMD dist/terraform-provider-${PROVIDER_NAME}_${VERSION}_darwin_amd64.zip | awk '{ print $1 }')"
             },
             "darwin_arm64": {
-              "filename": "terraform-provider-$PROVIDER_NAME_${VERSION}_darwin_arm64.zip",
-              "shasum": "$($CHECKSUM_CMD dist/terraform-provider-$PROVIDER_NAME_${VERSION}_darwin_arm64.zip | awk '{ print $1 }')"
+              "filename": "terraform-provider-${PROVIDER_NAME}_${VERSION}_darwin_arm64.zip",
+              "shasum": "$($CHECKSUM_CMD dist/terraform-provider-${PROVIDER_NAME}_${VERSION}_darwin_arm64.zip | awk '{ print $1 }')"
             },
             "linux_amd64": {
-              "filename": "terraform-provider-$PROVIDER_NAME_${VERSION}_linux_amd64.zip",
-              "shasum": "$($CHECKSUM_CMD dist/terraform-provider-$PROVIDER_NAME_${VERSION}_linux_amd64.zip | awk '{ print $1 }')"
+              "filename": "terraform-provider-${PROVIDER_NAME}_${VERSION}_linux_amd64.zip",
+              "shasum": "$($CHECKSUM_CMD dist/terraform-provider-${PROVIDER_NAME}_${VERSION}_linux_amd64.zip | awk '{ print $1 }')"
             },
             "linux_arm64": {
-              "filename": "terraform-provider-$PROVIDER_NAME_${VERSION}_linux_arm64.zip",
-              "shasum": "$($CHECKSUM_CMD dist/terraform-provider-$PROVIDER_NAME_${VERSION}_linux_arm64.zip | awk '{ print $1 }')"
+              "filename": "terraform-provider-${PROVIDER_NAME}_${VERSION}_linux_arm64.zip",
+              "shasum": "$($CHECKSUM_CMD dist/terraform-provider-${PROVIDER_NAME}_${VERSION}_linux_arm64.zip | awk '{ print $1 }')"
             },
             "windows_amd64": {
-              "filename": "terraform-provider-$PROVIDER_NAME_${VERSION}_windows_amd64.zip",
-              "shasum": "$($CHECKSUM_CMD dist/terraform-provider-$PROVIDER_NAME_${VERSION}_windows_amd64.zip | awk '{ print $1 }')"
+              "filename": "terraform-provider-${PROVIDER_NAME}_${VERSION}_windows_amd64.zip",
+              "shasum": "$($CHECKSUM_CMD dist/terraform-provider-${PROVIDER_NAME}_${VERSION}_windows_amd64.zip | awk '{ print $1 }')"
             },
-            "windows_arm64": {
-              "filename": "terraform-provider-$PROVIDER_NAME_${VERSION}_windows_arm64.zip",
-              "shasum": "$($CHECKSUM_CMD dist/terraform-provider-$PROVIDER_NAME_${VERSION}_windows_arm64.zip | awk '{ print $1 }')"
-            }
           }
         }
       }
