@@ -6,7 +6,7 @@ project_name: terraform-provider-tekton
 
 builds:
   - id: tekton
-    binary: '{{ .ProjectName }}_v{{ .Version }}'
+    binary: '{{ .ProjectName }}_v{{ .Version }}_{{ .Os }}_{{ .Arch }}'
     goos:
       - linux
       - windows
