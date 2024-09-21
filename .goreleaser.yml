@@ -2,10 +2,6 @@ version: 2
 before:
   hooks:
     - go mod tidy
-# after:
-#   hooks:
-#     # Run the generate-manifest.sh script after the build
-#     - ./generate-manifest.sh {{ .Version }} SamuelDBines tekton
 project_name: terraform-provider-tekton
 
 builds:
@@ -43,6 +39,19 @@ checksum:
     - glob: 'terraform-registry-manifest.json'
       name_template: '{{ .ProjectName }}_{{ .Version }}_manifest.json'
   name_template: '{{ .ProjectName }}_{{ .Version }}_SHA256SUMS'
+
+signs:
+  - artifacts: checksum
+    args:
+      # if you are using this in a GitHub action or some other automated pipeline, you 
+      # need to pass the batch flag to indicate its not interactive.
+      - "--batch"
+      - "--local-user"
+      - "{{ .Env.GPG_PRIVATE_KEY }}" # set this environment variable for your signing key
+      - "--output"
+      - "${signature}"
+      - "--detach-sign"
+      - "${artifact}"
 # checksum:
 #   name_template: 'checksums.txt'
 
