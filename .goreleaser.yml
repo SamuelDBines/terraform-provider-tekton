@@ -2,7 +2,10 @@ version: 2
 before:
   hooks:
     - go mod tidy
-    # - ./generate-manifest.sh {{ .Version }} SamuelDBines tekton
+# after:
+#   hooks:
+#     # Run the generate-manifest.sh script after the build
+#     - ./generate-manifest.sh {{ .Version }} SamuelDBines tekton
 project_name: terraform-provider-tekton
 
 builds:
@@ -54,3 +57,8 @@ release:
 
 changelog:
   disable: true
+
+# custom:
+#   - id: generate-manifest
+#     description: "Generate the terraform-registry-manifest.json"
+#     run: ./generate-manifest.sh {{ .Version }} SamuelDBines tekton

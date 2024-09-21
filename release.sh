@@ -1,1 +1,1 @@
-source ./.env | ./generate-manifest.sh 1.0.6 SamuelDBines tekton |goreleaser release --clean
+source ./.env | goreleaser release --clean
