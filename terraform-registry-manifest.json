@@ -2,30 +2,30 @@
   "providers": {
     "github.com/SamuelDBines/tekton": {
       "versions": {
-        "1.0.0": {
+        "1.0.2": {
           "platforms": {
             "darwin_amd64": {
-              "filename": "terraform-provider-1.0.0_darwin_amd64.zip",
+              "filename": "terraform-provider-1.0.2_darwin_amd64.zip",
               "shasum": ""
             },
             "darwin_arm64": {
-              "filename": "terraform-provider-1.0.0_darwin_arm64.zip",
+              "filename": "terraform-provider-1.0.2_darwin_arm64.zip",
               "shasum": ""
             },
             "linux_amd64": {
-              "filename": "terraform-provider-1.0.0_linux_amd64.zip",
+              "filename": "terraform-provider-1.0.2_linux_amd64.zip",
               "shasum": ""
             },
             "linux_arm64": {
-              "filename": "terraform-provider-1.0.0_linux_arm64.zip",
+              "filename": "terraform-provider-1.0.2_linux_arm64.zip",
               "shasum": ""
             },
             "windows_amd64": {
-              "filename": "terraform-provider-1.0.0_windows_amd64.zip",
+              "filename": "terraform-provider-1.0.2_windows_amd64.zip",
               "shasum": ""
             },
             "windows_arm64": {
-              "filename": "terraform-provider-1.0.0_windows_arm64.zip",
+              "filename": "terraform-provider-1.0.2_windows_arm64.zip",
               "shasum": ""
             }
           }

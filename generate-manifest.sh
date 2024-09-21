@@ -12,6 +12,8 @@ else
   CHECKSUM_CMD="sha256sum"
 fi
 
+echo "$($CHECKSUM_CMD dist/terraform-provider-$PROVIDER_NAME_${VERSION}_darwin_amd64.zip | awk '{ print $1 }')"
+
 # Create the JSON structure
 cat <<EOF > terraform-registry-manifest.json
 {
