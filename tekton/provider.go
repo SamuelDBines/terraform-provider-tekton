@@ -2,6 +2,8 @@ package tekton
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	tektonclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
@@ -50,5 +52,16 @@ func loadKubeConfig(configPath string) (*rest.Config, error) {
 	if configPath == "" {
 		return nil, fmt.Errorf("KUBECONFIG environment variable or kubeconfig file must be provided")
 	}
+
+	// Expand "~" to the user's home directory
+	if configPath[:2] == "~/" {
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			return nil, fmt.Errorf("failed to get home directory: %v", err)
+		}
+		configPath = filepath.Join(homeDir, configPath[2:])
+	}
+
+	// Build the Kubernetes configuration from the file
 	return clientcmd.BuildConfigFromFlags("", configPath)
 }
