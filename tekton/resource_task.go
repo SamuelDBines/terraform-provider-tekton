@@ -16,7 +16,7 @@ func resourceTektonTask() *schema.Resource {
 		Create: resourceTektonTaskCreate,
 		Read:   resourceTektonTaskRead,
 		Update: resourceTektonTaskUpdate,
-		// Delete: resourceTektonTaskDelete,
+		Delete: resourceTektonTaskDelete,
 
 		Schema: map[string]*schema.Schema{
 			"name": {
