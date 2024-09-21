@@ -1,3 +1,7 @@
+version: 2
+before:
+  hooks:
+    - go mod tidy
 project_name: terraform-provider-tekton
 
 builds:
@@ -14,15 +18,19 @@ builds:
     env:
       - CGO_ENABLED=0
 
-archive:
-  format: zip
-  files:
-    - LICENSE
+archives:
+  - format: zip
+    name_template: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+    # files:
+    #   - LICENSE
 
-checksum:
-  name_template: 'checksums.txt'
+# checksum:
+#   name_template: 'checksums.txt'
 
 release:
   github:
     owner: SamuelDBines
     name: terraform-provider-tekton
+
+changelog:
+  disable: true
