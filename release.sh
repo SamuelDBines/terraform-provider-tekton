@@ -1,1 +1,1 @@
-source ./.env | goreleaser release
+source ./.env | goreleaser release --clean
