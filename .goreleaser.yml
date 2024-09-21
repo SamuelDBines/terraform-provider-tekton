@@ -28,6 +28,7 @@ archives:
 #   name_template: 'checksums.txt'
 
 release:
+  disable: false
   github:
     owner: SamuelDBines
     name: terraform-provider-tekton
