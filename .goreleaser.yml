@@ -6,7 +6,7 @@ project_name: terraform-provider-tekton
 
 builds:
   - id: tekton
-    binary: terraform-provider-tekton
+    binary: '{{ .ProjectName }}_v{{ .Version }}_x5'
     goos:
       - linux
       - windows
@@ -36,6 +36,9 @@ release:
   github:
     owner: SamuelDBines
     name: terraform-provider-tekton
+  extra_files:
+    - glob: 'terraform-registry-manifest.json'
+      name_template: '{{ .ProjectName }}_{{ .Version }}_manifest.json'
 
 changelog:
   disable: true
