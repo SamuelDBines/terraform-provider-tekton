@@ -1,0 +1,28 @@
+project_name: terraform-provider-tekton
+
+builds:
+  - id: tekton
+    binary: terraform-provider-tekton
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags: "-s -w"
+    env:
+      - CGO_ENABLED=0
+
+archive:
+  format: zip
+  files:
+    - LICENSE
+
+checksum:
+  name_template: 'checksums.txt'
+
+release:
+  github:
+    owner: SamuelDBines
+    name: terraform-provider-tekton
