@@ -41,7 +41,7 @@ cat <<EOF > terraform-registry-manifest.json
             "windows_amd64": {
               "filename": "terraform-provider-${PROVIDER_NAME}_${VERSION}_windows_amd64.zip",
               "shasum": "$($CHECKSUM_CMD dist/terraform-provider-${PROVIDER_NAME}_${VERSION}_windows_amd64.zip | awk '{ print $1 }')"
-            },
+            }
           }
         }
       }
