@@ -2,11 +2,12 @@ version: 2
 before:
   hooks:
     - go mod tidy
+    - ./generate-manifest.sh {{ .Version }} SamuelDBines tekton
 project_name: terraform-provider-tekton
 
 builds:
   - id: tekton
-    binary: '{{ .ProjectName }}_v{{ .Version }}_{{ .Os }}_{{ .Arch }}'
+    binary: '{{ .ProjectName }}_v{{ .Version }}'
     goos:
       - linux
       - windows
@@ -49,7 +50,7 @@ release:
     name: terraform-provider-tekton
   extra_files:
     - glob: 'terraform-registry-manifest.json'
-      name_template: '{{ .ProjectName }}_{{ .Version }}_manifest.json'
+      # name_template: '{{ .ProjectName }}_{{ .Version }}_manifest.json'
 
 changelog:
   disable: true
