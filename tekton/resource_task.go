@@ -6,6 +6,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	tektonv1beta1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
+	tektonclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -89,19 +90,19 @@ func resourceTektonTaskUpdate(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-// func resourceTektonTaskDelete(d *schema.ResourceData, m interface{}) error {
-// 	client := m.(*tektonclient.Clientset)
-// 	name := d.Id()
-// 	namespace := d.Get("namespace").(string)
+func resourceTektonTaskDelete(d *schema.ResourceData, m interface{}) error {
+	client := m.(*tektonclient.Clientset)
+	name := d.Id()
+	namespace := d.Get("namespace").(string)
 
-// 	err := client.TektonV1beta1().Tasks(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
-// 	if err != nil {
-// 		return fmt.Errorf("failed to delete Tekton Task: %v", err)
-// 	}
+	err := client.TektonV1beta1().Tasks(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
+	if err != nil {
+		return fmt.Errorf("failed to delete Tekton Task: %v", err)
+	}
 
-// 	d.SetId("")
-// 	return nil
-// }
+	d.SetId("")
+	return nil
+}
 
 // Helper function to convert Terraform steps to Tekton steps
 func getTaskSteps(tfSteps []interface{}) []tektonv1beta1.Step {
