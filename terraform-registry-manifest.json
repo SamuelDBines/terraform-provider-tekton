@@ -1,8 +1,32 @@
 {
-  "version": 1,
-  "metadata": {
-    "protocol_versions": [
-      "5.0"
-    ]
+  "providers": {
+    "github.com/SamuelDBines/tekton": {
+      "versions": {
+        "1.0.10": {
+          "platforms": {
+            "darwin_amd64": {
+              "filename": "terraform-provider-tekton_1.0.10_darwin_amd64.zip",
+              "shasum": "1dbef1f3ea517a1d38aef6a680d7133b6e17bdb25bf60eae500852f83f588ff7"
+            },
+            "darwin_arm64": {
+              "filename": "terraform-provider-tekton_1.0.10_darwin_arm64.zip",
+              "shasum": "24ecd990c0b3233c3b9a63c45262f4f6092c10e6b17a3453c58f536cdace8584"
+            },
+            "linux_amd64": {
+              "filename": "terraform-provider-tekton_1.0.10_linux_amd64.zip",
+              "shasum": "09ec9e9fd158a3a5fa94e8e7d71888915d158963ab56cf1282075090ca1ac60c"
+            },
+            "linux_arm64": {
+              "filename": "terraform-provider-tekton_1.0.10_linux_arm64.zip",
+              "shasum": "7f9fe915d160e9e38e163cc17539888155991a4076973dd12519d03546d9d885"
+            },
+            "windows_amd64": {
+              "filename": "terraform-provider-tekton_1.0.10_windows_amd64.zip",
+              "shasum": "c657bde423974d1d4a7e4c579423de4404f47ca295c5500a0a35ecfc7b35e4ec"
+            }
+          }
+        }
+      }
+    }
   }
 }
