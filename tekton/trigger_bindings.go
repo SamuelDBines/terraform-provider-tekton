@@ -120,8 +120,8 @@ func getTriggerBindingParams(tfBindings []interface{}) []tektonv1alpha1.Param {
 	for _, tfBinding := range tfBindings {
 		bindingData := tfBinding.(map[string]interface{})
 		binding := tektonv1alpha1.Param{
-			Name:  bindingData["name"].(string),
-			Value: tektonv1alpha1.ArrayOrString{StringVal: bindingData["value"].(string)},
+			Name: bindingData["name"].(string),
+			// Value: tektonv1alpha1.ArrayOrString{StringVal: bindingData["value"].(string)},
 		}
 		bindings = append(bindings, binding)
 	}
