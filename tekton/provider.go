@@ -58,9 +58,12 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		return nil, err
 	}
 
-	return {
-		TektonClient: tektonClient, 
-		TektonTriggersClient: tektonTriggersClient
+	return struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	}{
+		TektonClient:         tektonClient,
+		TektonTriggersClient: tektonTriggersClient,
 	}, nil
 }
 
