@@ -49,8 +49,43 @@ func resourceTektonTask() *schema.Resource {
 					},
 				},
 			},
+			"workspaces": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"name": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"description": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+					},
+				},
+			},
 		},
 	}
+}
+
+func getTaskWorkspaces(tfWorkspaces []interface{}) []tektonv1beta1.WorkspaceDeclaration {
+	var workspaces []tektonv1beta1.WorkspaceDeclaration
+
+	for _, tfWorkspace := range tfWorkspaces {
+		workspaceData := tfWorkspace.(map[string]interface{})
+		workspace := tektonv1beta1.WorkspaceDeclaration{
+			Name: workspaceData["name"].(string),
+		}
+
+		if v, ok := workspaceData["description"]; ok {
+			workspace.Description = v.(string)
+		}
+
+		workspaces = append(workspaces, workspace)
+	}
+
+	return workspaces
 }
 
 // resourceTektonTaskCreate creates a Tekton Task.
@@ -60,6 +95,7 @@ func resourceTektonTaskCreate(d *schema.ResourceData, m interface{}) error {
 	namespace := d.Get("namespace").(string)
 
 	steps := getTaskSteps(d.Get("steps").([]interface{}))
+	workspaces := getTaskWorkspaces(d.Get("workspaces").([]interface{}))
 
 	task := &tektonv1beta1.Task{
 		ObjectMeta: metav1.ObjectMeta{
@@ -67,7 +103,8 @@ func resourceTektonTaskCreate(d *schema.ResourceData, m interface{}) error {
 			Namespace: namespace,
 		},
 		Spec: tektonv1beta1.TaskSpec{
-			Steps: steps,
+			Steps:      steps,
+			Workspaces: workspaces,
 		},
 	}
 

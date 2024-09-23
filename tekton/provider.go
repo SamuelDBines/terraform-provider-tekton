@@ -23,7 +23,14 @@ func Provider() *schema.Provider {
 			},
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"tekton_task": resourceTektonTask(),
+			"tekton_task":            resourceTektonTask(),
+			"tekton_taskrun":         resourceTektonTaskRun(),
+			"tekton_pipeline":        resourceTektonPipeline(),
+			"tekton_pipelinerun":     resourceTektonPipelineRun(),
+			"tekton_triggers":        resourceTektonTriggers(),
+			"tekton_triggertemplate": resourceTektonTriggerTemplate(),
+			"tekton_triggerbinding":  resourceTektonTriggerBinding(),
+			"tekton_eventlistener":   resourceTektonEventListener(),
 			// Define other resources like "tekton_pipeline" here
 		},
 		ConfigureFunc: providerConfigure,
