@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	tektonv1beta1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	tektonclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
+	triggersclient "github.com/tektoncd/triggers/pkg/client/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -90,7 +91,10 @@ func getTaskWorkspaces(tfWorkspaces []interface{}) []tektonv1beta1.WorkspaceDecl
 
 // resourceTektonTaskCreate creates a Tekton Task.
 func resourceTektonTaskCreate(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Get("name").(string)
 	namespace := d.Get("namespace").(string)
 
@@ -108,7 +112,7 @@ func resourceTektonTaskCreate(d *schema.ResourceData, m interface{}) error {
 		},
 	}
 
-	_, err := client.TektonV1beta1().Tasks(namespace).Create(context.Background(), task, metav1.CreateOptions{})
+	_, err := client.TektonClient.TektonV1beta1().Tasks(namespace).Create(context.Background(), task, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create Tekton Task: %v", err)
 	}
@@ -128,11 +132,14 @@ func resourceTektonTaskUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceTektonTaskDelete(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Id()
 	namespace := d.Get("namespace").(string)
 
-	err := client.TektonV1beta1().Tasks(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
+	err := client.TektonClient.TektonV1beta1().Tasks(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to delete Tekton Task: %v", err)
 	}

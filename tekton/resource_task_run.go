@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	tektonv1beta1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	tektonclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
+	triggersclient "github.com/tektoncd/triggers/pkg/client/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -60,7 +61,10 @@ func resourceTektonTaskRun() *schema.Resource {
 
 // resourceTektonTaskRunCreate creates a Tekton TaskRun.
 func resourceTektonTaskRunCreate(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Get("name").(string)
 	namespace := d.Get("namespace").(string)
 	taskRefName := d.Get("task_ref_name").(string)
@@ -82,7 +86,7 @@ func resourceTektonTaskRunCreate(d *schema.ResourceData, m interface{}) error {
 		},
 	}
 
-	_, err := client.TektonV1beta1().TaskRuns(namespace).Create(context.Background(), taskRun, metav1.CreateOptions{})
+	_, err := client.TektonClient.TektonV1beta1().TaskRuns(namespace).Create(context.Background(), taskRun, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create Tekton TaskRun: %v", err)
 	}
@@ -93,11 +97,14 @@ func resourceTektonTaskRunCreate(d *schema.ResourceData, m interface{}) error {
 
 // resourceTektonTaskRunRead reads the state of a Tekton TaskRun.
 func resourceTektonTaskRunRead(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Id()
 	namespace := d.Get("namespace").(string)
 
-	_, err := client.TektonV1beta1().TaskRuns(namespace).Get(context.Background(), name, metav1.GetOptions{})
+	_, err := client.TektonClient.TektonV1beta1().TaskRuns(namespace).Get(context.Background(), name, metav1.GetOptions{})
 	if err != nil {
 		// If the task run is not found, we should remove it from the state
 		d.SetId("")
@@ -115,11 +122,14 @@ func resourceTektonTaskRunUpdate(d *schema.ResourceData, m interface{}) error {
 
 // resourceTektonTaskRunDelete deletes a Tekton TaskRun.
 func resourceTektonTaskRunDelete(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Id()
 	namespace := d.Get("namespace").(string)
 
-	err := client.TektonV1beta1().TaskRuns(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
+	err := client.TektonClient.TektonV1beta1().TaskRuns(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to delete Tekton TaskRun: %v", err)
 	}

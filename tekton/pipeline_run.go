@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	tektonv1beta1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	tektonclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
+	triggersclient "github.com/tektoncd/triggers/pkg/client/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -60,7 +61,10 @@ func resourceTektonPipelineRun() *schema.Resource {
 
 // resourceTektonPipelineRunCreate creates a Tekton PipelineRun.
 func resourceTektonPipelineRunCreate(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Get("name").(string)
 	namespace := d.Get("namespace").(string)
 	pipelineRefName := d.Get("pipeline_ref_name").(string)
@@ -82,7 +86,7 @@ func resourceTektonPipelineRunCreate(d *schema.ResourceData, m interface{}) erro
 		},
 	}
 
-	_, err := client.TektonV1beta1().PipelineRuns(namespace).Create(context.Background(), pipelineRun, metav1.CreateOptions{})
+	_, err := client.TektonClient.TektonV1beta1().PipelineRuns(namespace).Create(context.Background(), pipelineRun, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create Tekton PipelineRun: %v", err)
 	}
@@ -93,11 +97,14 @@ func resourceTektonPipelineRunCreate(d *schema.ResourceData, m interface{}) erro
 
 // resourceTektonPipelineRunRead reads the state of a Tekton PipelineRun.
 func resourceTektonPipelineRunRead(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Id()
 	namespace := d.Get("namespace").(string)
 
-	_, err := client.TektonV1beta1().PipelineRuns(namespace).Get(context.Background(), name, metav1.GetOptions{})
+	_, err := client.TektonClient.TektonV1beta1().PipelineRuns(namespace).Get(context.Background(), name, metav1.GetOptions{})
 	if err != nil {
 		// If the pipeline run is not found, remove it from the state
 		d.SetId("")
@@ -115,11 +122,14 @@ func resourceTektonPipelineRunUpdate(d *schema.ResourceData, m interface{}) erro
 
 // resourceTektonPipelineRunDelete deletes a Tekton PipelineRun.
 func resourceTektonPipelineRunDelete(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Id()
 	namespace := d.Get("namespace").(string)
 
-	err := client.TektonV1beta1().PipelineRuns(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
+	err := client.TektonClient.TektonV1beta1().PipelineRuns(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to delete Tekton PipelineRun: %v", err)
 	}

@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	tektonclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	tektonv1alpha1 "github.com/tektoncd/triggers/pkg/apis/triggers/v1alpha1"
+	triggersclient "github.com/tektoncd/triggers/pkg/client/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -48,7 +49,10 @@ func resourceTektonTriggerBinding() *schema.Resource {
 }
 
 func resourceTektonTriggerBindingCreate(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Get("name").(string)
 	namespace := d.Get("namespace").(string)
 
@@ -64,7 +68,7 @@ func resourceTektonTriggerBindingCreate(d *schema.ResourceData, m interface{}) e
 		},
 	}
 
-	_, err := client.TektonV1alpha1().TriggerBindings(namespace).Create(context.Background(), triggerBinding, metav1.CreateOptions{})
+	_, err := clients.TektonTriggersClient.TriggersV1alpha1().TriggerBindings(namespace).Create(context.Background(), triggerBinding, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create Tekton TriggerBinding: %v", err)
 	}
@@ -74,11 +78,14 @@ func resourceTektonTriggerBindingCreate(d *schema.ResourceData, m interface{}) e
 }
 
 func resourceTektonTriggerBindingRead(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Id()
 	namespace := d.Get("namespace").(string)
 
-	_, err := client.TektonV1alpha1().TriggerBindings(namespace).Get(context.Background(), name, metav1.GetOptions{})
+	_, err := clients.TektonTriggersClient.TriggersV1alpha1().TriggerBindings(namespace).Get(context.Background(), name, metav1.GetOptions{})
 	if err != nil {
 		d.SetId("")
 		return nil
@@ -92,11 +99,14 @@ func resourceTektonTriggerBindingUpdate(d *schema.ResourceData, m interface{}) e
 }
 
 func resourceTektonTriggerBindingDelete(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Id()
 	namespace := d.Get("namespace").(string)
 
-	err := client.TektonV1alpha1().TriggerBindings(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
+	err := clients.TektonTriggersClient.TriggersV1alpha1().TriggerBindings(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to delete Tekton TriggerBinding: %v", err)
 	}

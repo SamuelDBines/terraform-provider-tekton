@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	tektonclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	tektonv1alpha1 "github.com/tektoncd/triggers/pkg/apis/triggers/v1alpha1"
+	triggersclient "github.com/tektoncd/triggers/pkg/client/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -73,7 +74,10 @@ func resourceTektonTriggerTemplate() *schema.Resource {
 }
 
 func resourceTektonTriggerTemplateCreate(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Get("name").(string)
 	namespace := d.Get("namespace").(string)
 
@@ -91,7 +95,7 @@ func resourceTektonTriggerTemplateCreate(d *schema.ResourceData, m interface{}) 
 		},
 	}
 
-	_, err := client.TektonV1alpha1().TriggerTemplates(namespace).Create(context.Background(), triggerTemplate, metav1.CreateOptions{})
+	_, err := clients.TektonTriggersClient.TriggersV1alpha1().TriggerTemplates(namespace).Create(context.Background(), triggerTemplate, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create Tekton TriggerTemplate: %v", err)
 	}
@@ -101,11 +105,14 @@ func resourceTektonTriggerTemplateCreate(d *schema.ResourceData, m interface{}) 
 }
 
 func resourceTektonTriggerTemplateRead(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Id()
 	namespace := d.Get("namespace").(string)
 
-	_, err := client.TektonV1alpha1().TriggerTemplates(namespace).Get(context.Background(), name, metav1.GetOptions{})
+	_, err := clients.TektonTriggersClient.TriggersV1alpha1().TriggerTemplates(namespace).Get(context.Background(), name, metav1.GetOptions{})
 	if err != nil {
 		d.SetId("")
 		return nil
@@ -120,11 +127,14 @@ func resourceTektonTriggerTemplateUpdate(d *schema.ResourceData, m interface{}) 
 }
 
 func resourceTektonTriggerTemplateDelete(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Id()
 	namespace := d.Get("namespace").(string)
 
-	err := client.TektonV1alpha1().TriggerTemplates(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
+	err := clients.TektonTriggersClient.TriggersV1alpha1().TriggerTemplates(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to delete Tekton TriggerTemplate: %v", err)
 	}

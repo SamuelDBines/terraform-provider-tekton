@@ -7,6 +7,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	tektonclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
+	triggersclient "github.com/tektoncd/triggers/pkg/client/clientset/versioned"
+
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 )
@@ -51,7 +53,15 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		return nil, err
 	}
 
-	return tektonClient, nil
+	tektonTriggersClient, err := triggersclient.NewForConfig(kubeConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	return {
+		TektonClient: tektonClient, 
+		TektonTriggersClient: tektonTriggersClient
+	}, nil
 }
 
 // loadKubeConfig loads the Kubernetes configuration from a file.

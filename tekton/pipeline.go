@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	tektonv1beta1 "github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	tektonclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
+	triggersclient "github.com/tektoncd/triggers/pkg/client/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -116,7 +117,10 @@ func getPipelineTaskWorkspaces(tfWorkspaces []interface{}) []tektonv1beta1.Works
 
 // resourceTektonPipelineCreate creates a Tekton Pipeline.
 func resourceTektonPipelineCreate(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Get("name").(string)
 	namespace := d.Get("namespace").(string)
 
@@ -134,7 +138,7 @@ func resourceTektonPipelineCreate(d *schema.ResourceData, m interface{}) error {
 		},
 	}
 
-	_, err := client.TektonV1beta1().Pipelines(namespace).Create(context.Background(), pipeline, metav1.CreateOptions{})
+	_, err := client.TektonClient.TektonV1beta1().Pipelines(namespace).Create(context.Background(), pipeline, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create Tekton Pipeline: %v", err)
 	}
@@ -145,11 +149,14 @@ func resourceTektonPipelineCreate(d *schema.ResourceData, m interface{}) error {
 
 // resourceTektonPipelineRead reads the state of a Tekton Pipeline.
 func resourceTektonPipelineRead(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Id()
 	namespace := d.Get("namespace").(string)
 
-	_, err := client.TektonV1beta1().Pipelines(namespace).Get(context.Background(), name, metav1.GetOptions{})
+	_, err := client.TektonClient.TektonV1beta1().Pipelines(namespace).Get(context.Background(), name, metav1.GetOptions{})
 	if err != nil {
 		// If the pipeline is not found, remove it from the state
 		d.SetId("")
@@ -167,11 +174,14 @@ func resourceTektonPipelineUpdate(d *schema.ResourceData, m interface{}) error {
 
 // resourceTektonPipelineDelete deletes a Tekton Pipeline.
 func resourceTektonPipelineDelete(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Id()
 	namespace := d.Get("namespace").(string)
 
-	err := client.TektonV1beta1().Pipelines(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
+	err := client.TektonClient.TektonV1beta1().Pipelines(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to delete Tekton Pipeline: %v", err)
 	}
@@ -202,13 +212,4 @@ func getPipelineTasks(tfTasks []interface{}) []tektonv1beta1.PipelineTask {
 	}
 
 	return tasks
-}
-
-// Helper function to convert a Terraform list to a string slice
-func toStringSlice(tfList []interface{}) []string {
-	var result []string
-	for _, v := range tfList {
-		result = append(result, v.(string))
-	}
-	return result
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	tektonclient "github.com/tektoncd/pipeline/pkg/client/clientset/versioned"
 	tektonv1alpha1 "github.com/tektoncd/triggers/pkg/apis/triggers/v1alpha1"
+	triggersclient "github.com/tektoncd/triggers/pkg/client/clientset/versioned"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -48,7 +49,10 @@ func resourceTektonEventListener() *schema.Resource {
 }
 
 func resourceTektonEventListenerCreate(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Get("name").(string)
 	namespace := d.Get("namespace").(string)
 
@@ -64,7 +68,7 @@ func resourceTektonEventListenerCreate(d *schema.ResourceData, m interface{}) er
 		},
 	}
 
-	_, err := client.TektonV1alpha1().EventListeners(namespace).Create(context.Background(), eventListener, metav1.CreateOptions{})
+	_, err := clients.TektonTriggersClient.TriggersV1alpha1().EventListeners(namespace).Create(context.Background(), eventListener, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create Tekton EventListener: %v", err)
 	}
@@ -74,11 +78,14 @@ func resourceTektonEventListenerCreate(d *schema.ResourceData, m interface{}) er
 }
 
 func resourceTektonEventListenerRead(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Id()
 	namespace := d.Get("namespace").(string)
 
-	_, err := client.TektonV1alpha1().EventListeners(namespace).Get(context.Background(), name, metav1.GetOptions{})
+	_, err := clients.TektonTriggersClient.TriggersV1alpha1().EventListeners(namespace).Get(context.Background(), name, metav1.GetOptions{})
 	if err != nil {
 		d.SetId("")
 		return nil
@@ -92,11 +99,14 @@ func resourceTektonEventListenerUpdate(d *schema.ResourceData, m interface{}) er
 }
 
 func resourceTektonEventListenerDelete(d *schema.ResourceData, m interface{}) error {
-	client := m.(*tektonclient.Clientset)
+	clients := m.(struct {
+		TektonClient         *tektonclient.Clientset
+		TektonTriggersClient *triggersclient.Clientset
+	})
 	name := d.Id()
 	namespace := d.Get("namespace").(string)
 
-	err := client.TektonV1alpha1().EventListeners(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
+	err := clients.TektonTriggersClient.TriggersV1alpha1().EventListeners(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to delete Tekton EventListener: %v", err)
 	}
