@@ -86,7 +86,7 @@ func resourceTektonTaskRunCreate(d *schema.ResourceData, m interface{}) error {
 		},
 	}
 
-	_, err := client.TektonClient.TektonV1beta1().TaskRuns(namespace).Create(context.Background(), taskRun, metav1.CreateOptions{})
+	_, err := clients.TektonClient.TektonV1beta1().TaskRuns(namespace).Create(context.Background(), taskRun, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create Tekton TaskRun: %v", err)
 	}
@@ -104,7 +104,7 @@ func resourceTektonTaskRunRead(d *schema.ResourceData, m interface{}) error {
 	name := d.Id()
 	namespace := d.Get("namespace").(string)
 
-	_, err := client.TektonClient.TektonV1beta1().TaskRuns(namespace).Get(context.Background(), name, metav1.GetOptions{})
+	_, err := clients.TektonClient.TektonV1beta1().TaskRuns(namespace).Get(context.Background(), name, metav1.GetOptions{})
 	if err != nil {
 		// If the task run is not found, we should remove it from the state
 		d.SetId("")
@@ -129,7 +129,7 @@ func resourceTektonTaskRunDelete(d *schema.ResourceData, m interface{}) error {
 	name := d.Id()
 	namespace := d.Get("namespace").(string)
 
-	err := client.TektonClient.TektonV1beta1().TaskRuns(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
+	err := clients.TektonClient.TektonV1beta1().TaskRuns(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to delete Tekton TaskRun: %v", err)
 	}

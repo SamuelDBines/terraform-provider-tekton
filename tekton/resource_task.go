@@ -112,7 +112,7 @@ func resourceTektonTaskCreate(d *schema.ResourceData, m interface{}) error {
 		},
 	}
 
-	_, err := client.TektonClient.TektonV1beta1().Tasks(namespace).Create(context.Background(), task, metav1.CreateOptions{})
+	_, err := clients.TektonClient.TektonV1beta1().Tasks(namespace).Create(context.Background(), task, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create Tekton Task: %v", err)
 	}
@@ -139,7 +139,7 @@ func resourceTektonTaskDelete(d *schema.ResourceData, m interface{}) error {
 	name := d.Id()
 	namespace := d.Get("namespace").(string)
 
-	err := client.TektonClient.TektonV1beta1().Tasks(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
+	err := clients.TektonClient.TektonV1beta1().Tasks(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to delete Tekton Task: %v", err)
 	}

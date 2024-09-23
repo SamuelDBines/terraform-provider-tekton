@@ -138,7 +138,7 @@ func resourceTektonPipelineCreate(d *schema.ResourceData, m interface{}) error {
 		},
 	}
 
-	_, err := client.TektonClient.TektonV1beta1().Pipelines(namespace).Create(context.Background(), pipeline, metav1.CreateOptions{})
+	_, err := clients.TektonClient.TektonV1beta1().Pipelines(namespace).Create(context.Background(), pipeline, metav1.CreateOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to create Tekton Pipeline: %v", err)
 	}
@@ -156,7 +156,7 @@ func resourceTektonPipelineRead(d *schema.ResourceData, m interface{}) error {
 	name := d.Id()
 	namespace := d.Get("namespace").(string)
 
-	_, err := client.TektonClient.TektonV1beta1().Pipelines(namespace).Get(context.Background(), name, metav1.GetOptions{})
+	_, err := clients.TektonClient.TektonV1beta1().Pipelines(namespace).Get(context.Background(), name, metav1.GetOptions{})
 	if err != nil {
 		// If the pipeline is not found, remove it from the state
 		d.SetId("")
@@ -181,7 +181,7 @@ func resourceTektonPipelineDelete(d *schema.ResourceData, m interface{}) error {
 	name := d.Id()
 	namespace := d.Get("namespace").(string)
 
-	err := client.TektonClient.TektonV1beta1().Pipelines(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
+	err := clients.TektonClient.TektonV1beta1().Pipelines(namespace).Delete(context.Background(), name, metav1.DeleteOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to delete Tekton Pipeline: %v", err)
 	}
