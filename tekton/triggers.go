@@ -162,15 +162,15 @@ func getTriggerTemplateParams(tfParams []interface{}) []tektonv1alpha1.ParamSpec
 // Helper function to convert resource templates for Tekton
 func getResourceTemplates(tfResourceTemplates []interface{}) []tektonv1alpha1.TriggerResourceTemplate {
 	var templates []tektonv1alpha1.TriggerResourceTemplate
-	for _, tfTemplate := range tfResourceTemplates {
-		templateData := tfTemplate.(map[string]interface{})
-		template := tektonv1alpha1.TriggerResourceTemplate{
-			APIVersion: templateData["api_version"].(string),
-			Kind:       templateData["kind"].(string),
-			Metadata:   templateData["metadata"].(map[string]interface{}),
-			Spec:       templateData["spec"].(map[string]interface{}),
-		}
-		templates = append(templates, template)
-	}
+	// for _, tfTemplate := range tfResourceTemplates {
+	// 	templateData := tfTemplate.(map[string]interface{})
+	// 	template := tektonv1alpha1.TriggerResourceTemplate{
+	// 		APIVersion: templateData["api_version"].(string),
+	// 		Kind:       templateData["kind"].(string),
+	// 		Metadata:   templateData["metadata"].(map[string]interface{}),
+	// 		Spec:       templateData["spec"].(map[string]interface{}),
+	// 	}
+	// 	templates = append(templates, template)
+	// }
 	return templates
 }

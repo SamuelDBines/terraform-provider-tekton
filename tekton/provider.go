@@ -29,7 +29,6 @@ func Provider() *schema.Provider {
 			"tekton_taskrun":         resourceTektonTaskRun(),
 			"tekton_pipeline":        resourceTektonPipeline(),
 			"tekton_pipelinerun":     resourceTektonPipelineRun(),
-			"tekton_triggers":        resourceTektonTriggers(),
 			"tekton_triggertemplate": resourceTektonTriggerTemplate(),
 			"tekton_triggerbinding":  resourceTektonTriggerBinding(),
 			"tekton_eventlistener":   resourceTektonEventListener(),

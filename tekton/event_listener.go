@@ -56,7 +56,7 @@ func resourceTektonEventListenerCreate(d *schema.ResourceData, m interface{}) er
 	name := d.Get("name").(string)
 	namespace := d.Get("namespace").(string)
 
-	triggers := getEventListenerTriggers(d.Get("triggers").([]interface{}))
+	// triggers := getEventListenerTriggers(d.Get("triggers").([]interface{}))
 
 	eventListener := &tektonv1alpha1.EventListener{
 		ObjectMeta: metav1.ObjectMeta{
@@ -64,7 +64,7 @@ func resourceTektonEventListenerCreate(d *schema.ResourceData, m interface{}) er
 			Namespace: namespace,
 		},
 		Spec: tektonv1alpha1.EventListenerSpec{
-			Triggers: triggers,
+			// Triggers: triggers,
 		},
 	}
 
@@ -115,21 +115,21 @@ func resourceTektonEventListenerDelete(d *schema.ResourceData, m interface{}) er
 	return nil
 }
 
-func getEventListenerTriggers(tfTriggers []interface{}) []tektonv1alpha1.EventListenerTrigger {
-	var triggers []tektonv1alpha1.EventListenerTrigger
-	for _, tfTrigger := range tfTriggers {
-		triggerData := tfTrigger.(map[string]interface{})
-		trigger := tektonv1alpha1.EventListenerTrigger{
-			Template: tektonv1alpha1.EventListenerTemplate{
-				Name: triggerData["trigger_template_name"].(string),
-			},
-			Bindings: []*tektonv1alpha1.EventListenerBinding{
-				{
-					Name: triggerData["trigger_binding_name"].(string),
-				},
-			},
-		}
-		triggers = append(triggers, trigger)
-	}
-	return triggers
-}
+// func getEventListenerTriggers(tfTriggers []interface{}) []tektonv1alpha1.EventListenerTrigger {
+// 	var triggers []tektonv1alpha1.EventListenerTrigger
+// 	for _, tfTrigger := range tfTriggers {
+// 		triggerData := tfTrigger.(map[string]interface{})
+// 		trigger := tektonv1alpha1.EventListenerTrigger{
+// 			Template: tektonv1alpha1.EventListenerTemplate{
+// 				Name: triggerData["trigger_template_name"].(string),
+// 			},
+// 			Bindings: []*tektonv1alpha1.EventListenerBinding{
+// 				{
+// 					Name: triggerData["trigger_binding_name"].(string),
+// 				},
+// 			},
+// 		}
+// 		triggers = append(triggers, trigger)
+// 	}
+// 	return triggers
+// }
